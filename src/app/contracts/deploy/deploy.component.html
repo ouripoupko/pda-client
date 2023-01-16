@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Deploy a new contract</h2>
+<mat-dialog-content>
+  <div>
+    Select a contract:
+    <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
+    <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
+      {{file ? file.name : 'no file selected'}}
+  </div>
+  <div>
+    Give it a name:
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput type="text" [(ngModel)]="contractName">
+    </mat-form-field>
+  </div>
+  <div>
+    Select a protocol:
+    <mat-form-field appearance="fill">
+      <mat-label>protocol</mat-label>
+      <mat-select [(value)]="selectedProtocol">
+        <mat-option value="BFT">BFT</mat-option>
+        <mat-option value="POW">POW</mat-option>
+        <mat-option value="Blocklace">Blocklace</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    Default application link:
+    <mat-form-field appearance="fill">
+      <mat-label>app link</mat-label>
+      <mat-select [(value)]="appLink">
+        <mat-option value="http://localhost:4200/">deliberation</mat-option>
+        <mat-option value="http://localhost:4201/">social network</mat-option>
+        <mat-option value="http://localhost:4202/">personal profile</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="{'file': file, 'contractName': contractName,
+                                          'protocol': selectedProtocol, 'appLink': appLink}"
+          cdkFocusInitial>Deploy</button>
+</mat-dialog-actions>
+

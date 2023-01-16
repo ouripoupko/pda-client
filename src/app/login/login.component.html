@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="vertical-center">
+    <div class="sec">
+      <div>
+        Select an identity:
+        <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
+        <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
+        {{key.slice(0, 4) + '...' + key.slice(-4)}}
+      </div>
+      <div>
+        Select a server:
+        <mat-form-field appearance="fill">
+          <mat-label>server</mat-label>
+          <mat-select [(value)]="selectedServer">
+            <mat-option value="http://localhost:5001/">localhost</mat-option>
+            <mat-option value="b">Google</mat-option>
+            <mat-option value="c">BGU</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" (click)="onLogin($event)">Login</button>
+      <div class="H-line"></div>
+      <button mat-raised-button color="primary" (click)="onGenerate($event)">Generate new identifier</button>
+      This will download a file named my_key.json. Rename it to something more meaningful and save it in a safe place.
+      Then load it with the 'Browse' button above to login with this new identity.
+    </div>
+  </div>
+</div>
