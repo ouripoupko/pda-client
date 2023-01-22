@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class LoginComponent implements OnInit {
 
   currentInput: any;
-  key = 'no key loaded yet';
+  key: string = '';
   selectedServer: string = "";
   constructor(
     private router: Router,

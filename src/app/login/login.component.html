@@ -5,7 +5,7 @@
         Select an identity:
         <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
         <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
-        {{key.slice(0, 4) + '...' + key.slice(-4)}}
+        {{key ? key.slice(0, 4) + '...' + key.slice(-4) : 'no key selected yet'}}
       </div>
       <div>
         Select a server:

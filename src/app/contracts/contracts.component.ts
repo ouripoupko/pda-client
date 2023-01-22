@@ -101,7 +101,9 @@ export class ContractsComponent implements OnInit {
 
   openApp(contract: Contract) {
     let encodedServer = this.route.snapshot.paramMap.get('server') as string;
-    window.open(`${contract.default_app}/${encodedServer}/${this.agent}/${contract.name}`, "_blank");
+    let url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.name}`;
+    console.log(url)
+    window.open(url, "_blank");
   }
 
   log(obj: any) {
