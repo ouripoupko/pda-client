@@ -1,5 +1,7 @@
 export interface Contract {
+  id: string;
   name: string;
+  profile: string;
   contract: string;
   code: string;
   protocol: string;

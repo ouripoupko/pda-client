@@ -24,7 +24,7 @@ import { JoinComponent } from './join/join.component';
 export class ContractsComponent implements OnInit {
 
   @ViewChild(MatTable) table!: MatTable<any>;
-  displayedColumns: string[] = ['name', 'contract', 'protocol', 'expand'];
+  displayedColumns: string[] = ['name', 'contract', 'protocol', 'share', 'expand'];
   dataSource: Contract[] = [];
   clickedRow: string = "";
   expandedElement: any;
@@ -49,9 +49,9 @@ export class ContractsComponent implements OnInit {
   }
 
   updateContracts() {
-    this.dataSource = [];
     this.agentService.getContracts(this.server, this.agent)
       .subscribe((contracts:Contract[]) => {
+        this.dataSource = [];
         for (let contract of contracts) {
           this.dataSource.push(contract);
         }
@@ -61,8 +61,10 @@ export class ContractsComponent implements OnInit {
 
   openDeploy() {
     const dialogRef = this.dialog.open(DeployComponent);
+    dialogRef.componentInstance.existingProfiles =
+      this.dataSource.filter(contract => contract.contract == 'profile.py');
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(async result => {
       if (result) {
         let contract = {} as Contract;
         contract.address = this.server;
@@ -71,6 +73,7 @@ export class ContractsComponent implements OnInit {
         contract.protocol = result.protocol;
         contract.default_app = result.appLink;
         contract.contract = result.file.name;
+        contract.profile = result.profile;
         console.log(contract, result);
         var reader = new FileReader();
         reader.onload = () => {
@@ -101,12 +104,23 @@ export class ContractsComponent implements OnInit {
 
   openApp(contract: Contract) {
     let encodedServer = this.route.snapshot.paramMap.get('server') as string;
-    let url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.name}`;
+    let url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.id}`;
     console.log(url)
     window.open(url, "_blank");
   }
 
   log(obj: any) {
     console.log(obj);
+  }
+
+  onShare(event: any, contract: Contract) {
+    const link = {'address': this.server, 'agent': this.agent, 'contract': contract.id};
+    const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
+    var url = window.URL.createObjectURL(blob);
+    var anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "contract_link.json";
+    anchor.click();
+    window.URL.revokeObjectURL(url);
   }
 }

@@ -11,6 +11,8 @@ export class DeployComponent implements OnInit {
   contractName = '';
   selectedProtocol = '';
   appLink = '';
+  selectedProfile: any = '';
+  public existingProfiles: any[] = [];
 
   constructor() { }
 
