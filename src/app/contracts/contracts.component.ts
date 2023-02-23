@@ -90,15 +90,10 @@ export class ContractsComponent implements OnInit {
     const dialogRef = this.dialog.open(JoinComponent);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-      if(result.fileName.length > 0)
-      {
-        var reader = new FileReader();
-        reader.onload = () => {
-          var code = reader.result as string;
-        };
-        reader.readAsText(result.fileName);
-      }
+      console.log('Dialog result:', result);
+      this.agentService.joinContract(this.server, this.agent, result.address, result.agent, result.contract)
+        .subscribe(_ => {
+      });
     });
   }
 

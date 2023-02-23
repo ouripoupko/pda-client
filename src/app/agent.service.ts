@@ -57,6 +57,17 @@ export class AgentService {
     );
   }
 
+  joinContract(server: string, agent: string,
+               address: string, other_agent: string, contract_id: string): Observable<any> {
+    let params = new HttpParams().set('action', 'join_contract');
+    return this.http.put(`${server}ibc/app/${agent}`,
+                         { address: address, agent: other_agent, contract: contract_id },
+                          {...this.httpOptions, params: params}).pipe(
+      tap(_ => console.log(`connected to ${address} with contract ${contract_id}`)),
+      catchError(this.handleError<any>('connect'))
+    );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 

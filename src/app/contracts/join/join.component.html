@@ -1,11 +1,14 @@
 <h2 mat-dialog-title>Join an existing contract</h2>
 <mat-dialog-content>
-  <h3>address</h3>
-  agent
-  id
+  <div>
+    Upload link file:
+    <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
+    <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
+    {{name}}
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="'join results'"
+  <button mat-button [mat-dialog-close]="{'address': address, 'agent': agent, 'contract': contract}"
           cdkFocusInitial>Join</button>
 </mat-dialog-actions>
