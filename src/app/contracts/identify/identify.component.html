@@ -1,11 +1,5 @@
-<h2 mat-dialog-title>Join an existing contract</h2>
+<h2 mat-dialog-title>Choose your identity</h2>
 <mat-dialog-content>
-  <div>
-    Upload ID file:
-    <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
-    <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
-    {{name}}
-  </div>
   <div>
     Select a contract:
     <mat-form-field appearance="fill" class="text">
@@ -20,6 +14,6 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{'address': address, 'agent': agent, 'contract': selectedContract}"
-          cdkFocusInitial>Join</button>
+  <button mat-button [mat-dialog-close]="{'contract': selectedContract}"
+          cdkFocusInitial>Download<mat-icon fontIcon="download"></mat-icon></button>
 </mat-dialog-actions>

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Contract } from '../../contract';
+import { AgentService } from '../../agent.service';
 
 @Component({
   selector: 'app-join',
@@ -9,10 +11,14 @@ export class JoinComponent implements OnInit {
 
   address: string = '';
   agent: string = '';
-  contract: string = '';
+  selectedContract: string = '';
   name: string = '';
 
-  constructor() { }
+  existingContracts: Contract[] = [];
+
+  constructor(
+      private agentService: AgentService
+  ) { }
 
   ngOnInit(): void {
   }
@@ -26,8 +32,11 @@ export class JoinComponent implements OnInit {
         var json = JSON.parse(text);
         this.address = json['address'];
         this.agent = json['agent'];
-        this.contract = json['contract'];
         this.name = event.target.files[0].name;
+        this.agentService.getContracts(this.address, this.agent)
+          .subscribe((contracts:Contract[]) => {
+            this.existingContracts = contracts;
+          });
       };
       reader.readAsText(event.target.files[0]);
     }

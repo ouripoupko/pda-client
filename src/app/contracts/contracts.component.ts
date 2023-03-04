@@ -7,6 +7,7 @@ import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { DeployComponent } from './deploy/deploy.component';
 import { JoinComponent } from './join/join.component';
+import { IdentifyComponent } from './identify/identify.component';
 
 @Component({
   selector: 'app-contracts',
@@ -24,7 +25,7 @@ import { JoinComponent } from './join/join.component';
 export class ContractsComponent implements OnInit {
 
   @ViewChild(MatTable) table!: MatTable<any>;
-  displayedColumns: string[] = ['name', 'contract', 'protocol', 'share', 'expand'];
+  displayedColumns: string[] = ['name', 'contract', 'protocol', 'expand'];
   dataSource: Contract[] = [];
   clickedRow: string = "";
   expandedElement: any;
@@ -86,6 +87,7 @@ export class ContractsComponent implements OnInit {
       }
     });
   }
+
   openJoin() {
     const dialogRef = this.dialog.open(JoinComponent);
 
@@ -94,6 +96,26 @@ export class ContractsComponent implements OnInit {
       this.agentService.joinContract(this.server, this.agent, result.address, result.agent, result.contract)
         .subscribe(_ => {
       });
+    });
+  }
+
+  openID() {
+    const dialogRef = this.dialog.open(IdentifyComponent);
+    dialogRef.componentInstance.existingContracts =
+      this.dataSource.filter(contract => contract.contract == 'profile.py');
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog result:', result);
+      if(result) {
+        const link = {'address': this.server, 'agent': this.agent, 'profile': result.contract};
+        const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
+        var url = window.URL.createObjectURL(blob);
+        var anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "my_id.json";
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+      }
     });
   }
 
@@ -108,14 +130,4 @@ export class ContractsComponent implements OnInit {
     console.log(obj);
   }
 
-  onShare(event: any, contract: Contract) {
-    const link = {'address': this.server, 'agent': this.agent, 'contract': contract.id};
-    const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
-    var url = window.URL.createObjectURL(blob);
-    var anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "contract_link.json";
-    anchor.click();
-    window.URL.revokeObjectURL(url);
-  }
 }

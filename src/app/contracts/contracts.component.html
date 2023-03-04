@@ -1,3 +1,4 @@
+<h1>{{agent.slice(0, 4) + '...' + agent.slice(-4)}}</h1>
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8 table">
   <!-- Name Column -->
   <ng-container matColumnDef="name">
@@ -17,15 +18,6 @@
     <td mat-cell *matCellDef="let element">{{element.protocol}}</td>
   </ng-container>
 
-  <!-- share Column -->
-  <ng-container matColumnDef="share">
-    <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let element">
-      <button mat-raised-button style="background-color:LawnGreen;"
-              (click)="onShare($event, element); $event.stopPropagation();">Share</button>
-    </td>
-  </ng-container>
-
   <!-- expander Column -->
   <ng-container matColumnDef="expand">
     <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
@@ -40,11 +32,11 @@
 
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="expandedDetail">
-    <td mat-cell *matCellDef="let element" [attr.colspan]="5">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="4">
       <div class="example-element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <div class="example-element-code">
-          <pre>
+          <pre style='max-width:100px;'>
             <code [highlight]="element.code"></code>
           </pre>
         </div>
@@ -65,3 +57,4 @@
 
 <button mat-raised-button color="primary" (click)="openDeploy()">Deploy</button>
 <button mat-raised-button color="primary" (click)="openJoin()">Join</button>
+<button mat-raised-button style="background-color:LawnGreen;" (click)="openID()">Id<mat-icon fontIcon="download"></mat-icon></button>

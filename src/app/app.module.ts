@@ -21,6 +21,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 import { JoinComponent } from './contracts/join/join.component';
 import { DeployComponent } from './contracts/deploy/deploy.component';
 import { RegisterComponent } from './login/register/register.component';
+import { IdentifyComponent } from './contracts/identify/identify.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { RegisterComponent } from './login/register/register.component';
     ContractsComponent,
     JoinComponent,
     DeployComponent,
-    RegisterComponent
+    RegisterComponent,
+    IdentifyComponent
   ],
   imports: [
     BrowserModule,
