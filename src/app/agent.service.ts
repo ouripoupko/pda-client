@@ -19,7 +19,7 @@ export class AgentService {
 
 
   listen(server: string, identity: string): EventSource {
-    return new EventSource(`${server}stream/${identity}`);
+    return new EventSource(`${server}stream?agent=${identity}&contract=`);
   }
 
   isExistAgent(server: string, identity: string): Observable<Boolean> {

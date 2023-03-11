@@ -43,7 +43,7 @@ export class ContractsComponent implements OnInit {
     this.agent = this.route.snapshot.paramMap.get('agent') as string;
     this.updateContracts();
     this.agentService.listen(this.server, this.agent).addEventListener('message', message => {
-      if(message.data=="True") {
+      if(message.data.length > 0) {
         this.updateContracts();
       }
     });
