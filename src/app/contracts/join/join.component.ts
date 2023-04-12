@@ -13,6 +13,8 @@ export class JoinComponent implements OnInit {
   agent: string = '';
   selectedContract: string = '';
   name: string = '';
+  selectedProfile: any = '';
+  public existingProfiles: any[] = [];
 
   existingContracts: Contract[] = [];
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Contract, Method } from './contract';
-import { Observable, of } from 'rxjs';
+import { Observable, of, first } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
@@ -26,7 +26,8 @@ export class AgentService {
     let params = new HttpParams().set('action', 'is_exist_agent');
     return this.http.get<Boolean>(`${server}ibc/app/${identity}`, {params: params}).pipe(
         tap(_ => console.log('query agent')),
-        catchError(this.handleError<Boolean>('isExistsAgent', false))
+        catchError(this.handleError<Boolean>('isExistsAgent', false)),
+        first()
       );
   }
 
@@ -34,7 +35,8 @@ export class AgentService {
     let params = new HttpParams().set('action', 'register_agent');
     return this.http.put<Boolean>(`${server}ibc/app/${identity}`, {}, {...this.httpOptions, params:params} ).pipe(
       tap(_ => console.log('added new identity')),
-      catchError(this.handleError<Boolean>('registerAgent'))
+      catchError(this.handleError<Boolean>('registerAgent')),
+      first()
     );
   }
 
@@ -42,7 +44,8 @@ export class AgentService {
     let params = new HttpParams().set('action', 'get_contracts');
     return this.http.get<Contract[]>(`${server}ibc/app/${identity}`, {params: params}).pipe(
         tap(_ => console.log('fetched contracts')),
-        catchError(this.handleError<Contract[]>('getContracts', []))
+        catchError(this.handleError<Contract[]>('getContracts', [])),
+        first()
       );
   }
 
@@ -53,18 +56,20 @@ export class AgentService {
                                     contract,
                                     {...this.httpOptions, params: params}).pipe(
       tap(_ => console.log('added contract')),
-      catchError(this.handleError<Boolean>('addContract'))
+      catchError(this.handleError<Boolean>('addContract')),
+      first()
     );
   }
 
   joinContract(server: string, agent: string,
-               address: string, other_agent: string, contract_id: string): Observable<any> {
+               address: string, other_agent: string, contract_id: string, profile: string): Observable<any> {
     let params = new HttpParams().set('action', 'join_contract');
     return this.http.put(`${server}ibc/app/${agent}`,
-                         { address: address, agent: other_agent, contract: contract_id },
+                         { address: address, agent: other_agent, contract: contract_id, profile: profile },
                           {...this.httpOptions, params: params}).pipe(
-      tap(_ => console.log(`connected to ${address} with contract ${contract_id}`)),
-      catchError(this.handleError<any>('connect'))
+      tap(_ => console.log('joined contract')),
+      catchError(this.handleError<any>('connect')),
+      first()
     );
   }
 

@@ -90,10 +90,13 @@ export class ContractsComponent implements OnInit {
 
   openJoin() {
     const dialogRef = this.dialog.open(JoinComponent);
+    dialogRef.componentInstance.existingProfiles =
+      this.dataSource.filter(contract => contract.contract == 'profile.py');
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result:', result);
-      this.agentService.joinContract(this.server, this.agent, result.address, result.agent, result.contract)
+      this.agentService.joinContract(this.server, this.agent, result.address,
+                                     result.agent, result.contract, result.profile)
         .subscribe(_ => {
       });
     });

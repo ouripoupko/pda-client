@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
       reader.onload = () => {
         var text = reader.result as string;
         var json = JSON.parse(text);
-        this.key = json['public']['n'];
+        this.key = json['public'];
       };
       reader.readAsText(event.target.files[0]);
     }
@@ -59,26 +59,29 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  async onGenerate(event: any) {
-    let key = await window.crypto.subtle.generateKey(
-      {
-        name: "RSA-PSS",
-        modulusLength: 2048, //can be 1024, 2048, or 4096
-        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-      },
-      true,
-      ["sign", "verify"]
-    );
-    const publicKey = await window.crypto.subtle.exportKey(
-      "jwk",
-      key.publicKey
-    );
-    const privateKey = await window.crypto.subtle.exportKey(
-      "jwk",
-      key.privateKey
-    );
-    const pair = {'public': publicKey, 'private': privateKey};
+  onGenerate(event: any) {
+    var pad = new Uint8Array(32);
+    window.crypto.getRandomValues(pad);
+    let publicKey = Array.from(pad, value => value.toString(16).padStart(2, '0')).join('');
+//    let key = await window.crypto.subtle.generateKey(
+//      {
+//        name: "RSA-PSS",
+//        modulusLength: 2048, //can be 1024, 2048, or 4096
+//        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+//        hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+//      },
+//      true,
+//      ["sign", "verify"]
+//    );
+//    const publicKey = await window.crypto.subtle.exportKey(
+//      "jwk",
+//      key.publicKey
+//    );
+//    const privateKey = await window.crypto.subtle.exportKey(
+//      "jwk",
+//      key.privateKey
+//    );
+    const pair = {'public': publicKey, 'private': 'This is not a real key pair. just a mockup.'};
     const blob = new Blob([JSON.stringify(pair, null, 2)], { type: "application/json",});
     var url = window.URL.createObjectURL(blob);
     var anchor = document.createElement("a");

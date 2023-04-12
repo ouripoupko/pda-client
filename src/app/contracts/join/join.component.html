@@ -17,9 +17,20 @@
       </mat-select>
     </mat-form-field>
   </div>
+  <div>
+    Select your profile:
+    <mat-form-field appearance="fill" class="text">
+      <mat-label>profile</mat-label>
+      <mat-select [(value)]="selectedProfile">
+        <mat-option *ngFor="let profile of existingProfiles" [value]="profile.id">
+          {{profile.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{'address': address, 'agent': agent, 'contract': selectedContract}"
-          cdkFocusInitial>Join</button>
+  <button mat-button [mat-dialog-close]="{'address': address, 'agent': agent, 'contract': selectedContract,
+          'profile': selectedProfile}" cdkFocusInitial>Join</button>
 </mat-dialog-actions>
