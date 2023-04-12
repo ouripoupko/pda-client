@@ -1,27 +1,34 @@
 <div class="container">
   <div class="vertical-center">
-    <div class="sec">
-      Select an identity:
-      <div>
+    <h1>Login</h1>
+    <div class="input-wrap">
+      <label>Select an identity:</label>
+      <div class="file-input-wrapper">
         <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
-        <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
-        {{key ? key.slice(0, 4) + '...' + key.slice(-4) : 'no key selected yet'}}
+        <button mat-raised-button color="primary" (click)="fileUpload.click()" class="browse-button">Select existing</button>
+        <span class="or">--Or--</span>
+        <button mat-raised-button color="primary" (click)="onGenerate($event)">Generate new</button>
+        <span class="file-name-text">{{key ? key.slice(0, 4) + '...' + key.slice(-4) : 'no key selected yet'}}</span>
       </div>
-      Select a server:
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>server</mat-label>
-          <mat-select [(value)]="selectedServer">
-            <mat-option value="http://localhost:5001/">localhost</mat-option>
-            <mat-option value="b">Google</mat-option>
-            <mat-option value="c">BGU</mat-option>
-            <mat-option value="http://192.168.1.108:5001/">108</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <button mat-raised-button color="primary" (click)="onLogin($event)">Login</button>
-      <div class="H-line"></div>
-      <button mat-raised-button color="primary" (click)="onGenerate($event)">Generate new identifier</button>
     </div>
+    <div class="input-wrap">
+      <label>Select a server:</label>
+      <mat-form-field appearance="fill">
+        <mat-label>server</mat-label>
+        <mat-select [(value)]="selectedServer" (selectionChange)="onServerSelected($event)">
+          <mat-option value="http://localhost:5001/">localhost</mat-option>
+          <mat-option value="b">Google</mat-option>
+          <mat-option value="c">BGU</mat-option>
+          <mat-option value="http://192.168.0.103:5001/">103</mat-option>
+          <mat-option value="other">Other</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="showServerTextInput" appearance="fill">
+        <mat-label>Type a custom server</mat-label>
+        <input matInput (ngModelChange)="selectedServer">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" class="login-button" (click)="onLogin($event)"
+     [disabled]="!key || !selectedServer">Login</button>
   </div>
 </div>

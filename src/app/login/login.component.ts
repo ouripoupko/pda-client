@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AgentService } from '../agent.service';
 import { RegisterComponent } from './register/register.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ export class LoginComponent implements OnInit {
   currentInput: any;
   key: string = '';
   selectedServer: string = "";
+  showServerTextInput = false;
   constructor(
     private router: Router,
     private agentService: AgentService,
@@ -37,25 +39,32 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onLogin(event: any) {
-    this.agentService.isExistAgent(this.selectedServer, this.key).subscribe((exists: Boolean) => {
-      console.log(this.key, this.selectedServer, exists);
-      if (exists) {
-        this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
-      }
-      else {
-        const dialogRef = this.dialog.open(RegisterComponent);
+  onServerSelected(event: MatSelectChange) {
+    this.showServerTextInput = event.value == "other";
+  }
 
-        dialogRef.afterClosed().subscribe((result: Boolean) => {
-          if (result) {
-            this.agentService.registerAgent(this.selectedServer, this.key).subscribe((succeed: Boolean) => {
-              if(succeed) {
-                this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
-              }
-            });
-          }
-        });
-      }
+  onLogin(event: any) {
+    this.agentService.isExistAgent(this.selectedServer, this.key).subscribe({
+      next: (exists: Boolean) => {
+        console.log(this.key, this.selectedServer, exists);
+        if (exists) {
+          this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
+        }
+        else {
+          const dialogRef = this.dialog.open(RegisterComponent);
+
+          dialogRef.afterClosed().subscribe((result: Boolean) => {
+            if (result) {
+              this.agentService.registerAgent(this.selectedServer, this.key).subscribe((succeed: Boolean) => {
+                if(succeed) {
+                  this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
+                }
+              });
+            }
+          });
+        }
+    },
+      error: (e) => {}
     });
   }
 
@@ -89,5 +98,6 @@ export class LoginComponent implements OnInit {
     anchor.download = "my_key.json";
     anchor.click();
     window.URL.revokeObjectURL(url);
+    this.key = publicKey;
   }
 }

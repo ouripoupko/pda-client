@@ -26,7 +26,6 @@ export class AgentService {
     let params = new HttpParams().set('action', 'is_exist_agent');
     return this.http.get<Boolean>(`${server}ibc/app/${identity}`, {params: params}).pipe(
         tap(_ => console.log('query agent')),
-        catchError(this.handleError<Boolean>('isExistsAgent', false)),
         first()
       );
   }
@@ -77,7 +76,7 @@ export class AgentService {
     return (error: any): Observable<T> => {
 
       //  send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.log(error); // log to console instead
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
