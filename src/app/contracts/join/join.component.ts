@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Contract } from '../../contract';
 import { AgentService } from '../../agent.service';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-join',
@@ -11,6 +12,7 @@ export class JoinComponent implements OnInit {
 
   address: string = '';
   agent: string = '';
+  contractInvite: string = '';
   selectedContract: string = '';
   name: string = '';
   selectedProfile: any = '';
@@ -19,7 +21,8 @@ export class JoinComponent implements OnInit {
   existingContracts: Contract[] = [];
 
   constructor(
-      private agentService: AgentService
+      private agentService: AgentService,
+      private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -44,4 +47,19 @@ export class JoinComponent implements OnInit {
     }
   }
 
+  onInviteUpdate() {
+    try {
+      let json = JSON.parse(this.contractInvite);
+      this.address = json['address'];
+      this.agent = json['agent'];
+      this.agentService.getContracts(this.address, this.agent)
+        .subscribe((contracts:Contract[]) => {
+          this.existingContracts = contracts;
+        });
+    } catch {
+      let config = new MatSnackBarConfig;
+      config.duration = 2000;
+      this.snackBar.open('invalid invitation','',config);
+    }
+  }
 }

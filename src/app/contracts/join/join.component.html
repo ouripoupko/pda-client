@@ -1,10 +1,20 @@
 <h2 mat-dialog-title>Join an existing contract</h2>
 <mat-dialog-content>
+  <!--
   <div>
     Upload ID file:
     <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
     <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
     {{name}}
+  </div>
+  -->
+  <div>
+    Paste invitation:
+    <mat-form-field>
+      <mat-label>Invitation</mat-label>
+      <input matInput type="text" [(ngModel)]="contractInvite">
+    </mat-form-field>
+    <button mat-button (click)=onInviteUpdate() color="primary">Update</button>
   </div>
   <div>
     Select a contract:
@@ -30,7 +40,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button mat-dialog-close color="primary">Cancel</button>
   <button mat-button [mat-dialog-close]="{'address': address, 'agent': agent, 'contract': selectedContract,
-          'profile': selectedProfile}" cdkFocusInitial>Join</button>
+          'profile': selectedProfile}" cdkFocusInitial color="primary">Join</button>
 </mat-dialog-actions>

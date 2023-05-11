@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DeployComponent } from './deploy/deploy.component';
 import { JoinComponent } from './join/join.component';
 import { IdentifyComponent } from './identify/identify.component';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-contracts',
@@ -35,7 +36,8 @@ export class ContractsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private agentService: AgentService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -108,16 +110,24 @@ export class ContractsComponent implements OnInit {
       this.dataSource.filter(contract => contract.contract == 'profile.py');
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result:', result);
+      console.log('Dialog result modified:', result);
       if(result) {
         const link = {'address': this.server, 'agent': this.agent, 'profile': result.contract};
-        const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
-        var url = window.URL.createObjectURL(blob);
-        var anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = "my_id.json";
-        anchor.click();
-        window.URL.revokeObjectURL(url);
+        // const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
+        // var url = window.URL.createObjectURL(blob);
+        // var anchor = document.createElement("a");
+        // anchor.href = url;
+        // anchor.download = "my_id.json";
+        // anchor.click();
+        // window.URL.revokeObjectURL(url);
+        if (!navigator.clipboard) {
+          throw new Error("Browser don't have support for native clipboard.");
+        }
+        navigator.clipboard.writeText(JSON.stringify(link)).then(_ => {
+          let config = new MatSnackBarConfig();
+          config.duration = 2000;
+          this.snackBar.open('invitation copied to clipboard','',config);
+        });
       }
     });
   }
