@@ -120,18 +120,57 @@ export class ContractsComponent implements OnInit {
         // anchor.download = "my_id.json";
         // anchor.click();
         // window.URL.revokeObjectURL(url);
-        if (!navigator.clipboard) {
-          throw new Error("Browser don't have support for native clipboard.");
-        }
-        navigator.clipboard.writeText(JSON.stringify(link)).then(_ => {
-          let config = new MatSnackBarConfig();
-          config.duration = 2000;
-          this.snackBar.open('invitation copied to clipboard','',config);
-        });
+        this.copyToClipboard(JSON.stringify(link));
       }
     });
   }
 
+  copyToClipboard(text: string): void {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          this.showSuccess();
+        })
+        .catch((error) => {
+          this.execCommandFallback(text);
+        });
+    } else {
+      this.execCommandFallback(text);
+    }
+  }
+
+  execCommandFallback(text: string): void {
+    const copyText = document.createElement('textarea');
+    copyText.style.position = 'absolute';
+    copyText.style.left = '-99999px';
+    copyText.style.top = '0';
+    copyText.value = text;
+    document.body.appendChild(copyText);
+    copyText.focus();
+    copyText.select();
+    try {
+      if (document.execCommand('copy')) {
+        this.showSuccess();
+      } else {
+        this.manualCopyFallback(text);
+      }
+    } catch (error) {
+      this.manualCopyFallback(text);
+    } finally {
+      document.body.removeChild(copyText);
+    }
+  }
+
+  manualCopyFallback(text: string): void {
+    prompt('Please copy the following text:', text);
+  }
+
+  showSuccess(): void {
+    this.snackBar.open('Text copied to clipboard successfully', '', {
+      duration: 2000
+    });
+  }
+  
   openApp(contract: Contract) {
     let encodedServer = this.route.snapshot.paramMap.get('server') as string;
     let url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.id}`;
