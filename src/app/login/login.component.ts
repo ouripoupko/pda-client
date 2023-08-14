@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
       next: (exists: Boolean) => {
         console.log(this.key, this.selectedServer, exists);
         if (exists) {
-          this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
+          this.navigate();
         }
         else {
           const dialogRef = this.dialog.open(RegisterComponent);
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
             if (result) {
               this.agentService.registerAgent(this.selectedServer, this.key).subscribe((succeed: Boolean) => {
                 if(succeed) {
-                  this.router.navigate([`contracts/${encodeURIComponent(this.selectedServer)}/${this.key}`]);
+                  this.navigate();
                 }
               });
             }
@@ -67,6 +67,10 @@ export class LoginComponent implements OnInit {
       error: (e) => {}
     });
   }
+
+  navigate() {
+    this.router.navigate(['contracts'], { queryParams: { server: this.selectedServer, agent: this.key}});
+}
 
   onGenerate(event: any) {
     var pad = new Uint8Array(32);

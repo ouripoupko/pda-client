@@ -41,8 +41,12 @@ export class ContractsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.server = decodeURIComponent(this.route.snapshot.paramMap.get('server') as string);
-    this.agent = this.route.snapshot.paramMap.get('agent') as string;
+    this.route.queryParams.subscribe(params => {
+      this.server = params['server'];
+      this.agent = params['agent'];
+    });
+    console.log('subscribe done?', this.server, this.agent);
+
     this.updateContracts();
     this.agentService.listen(this.server, this.agent).addEventListener('message', message => {
       if(message.data.length > 0) {
@@ -77,6 +81,8 @@ export class ContractsComponent implements OnInit {
         contract.default_app = result.appLink;
         contract.contract = result.file.name;
         contract.profile = result.profile;
+        contract.group = result.group;
+        contract.threshold = result.threshold;
         console.log(contract, result);
         var reader = new FileReader();
         reader.onload = () => {
@@ -172,9 +178,14 @@ export class ContractsComponent implements OnInit {
   }
   
   openApp(contract: Contract) {
-    let encodedServer = this.route.snapshot.paramMap.get('server') as string;
-    let url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.id}`;
-    console.log(url)
+    // let encodedServer = this.route.snapshot.paramMap.get('server') as string;
+    // let old_url = `${contract.default_app}/${encodedServer}/${this.agent}/${contract.id}`;
+    // console.log(old_url)
+    const url = new URL(contract.default_app);
+    url.searchParams.append("server", this.server);
+    url.searchParams.append("agent", this.agent);
+    url.searchParams.append("contract", contract.id);
+
     window.open(url, "_blank");
   }
 

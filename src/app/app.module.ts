@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSliderModule } from '@angular/material/slider';
 
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -48,6 +49,7 @@ import { IdentifyComponent } from './contracts/identify/identify.component';
     MatDialogModule,
     MatInputModule,
     MatSnackBarModule,
+    MatSliderModule,
     AppRoutingModule
   ],
   providers: [

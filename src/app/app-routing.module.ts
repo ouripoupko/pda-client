@@ -5,7 +5,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 
 const routes: Routes = [
   { path: 'identify', component: LoginComponent },
-  { path: 'contracts/:server/:agent', component: ContractsComponent }
+  { path: 'contracts', component: ContractsComponent }
 ];
 
 @NgModule({

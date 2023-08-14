@@ -13,6 +13,9 @@ export class DeployComponent implements OnInit {
   appLink = '';
   selectedProfile: any = '';
   public existingProfiles: any[] = [];
+  inviteField: string = '';
+  partners: string[] = [];
+  threshold = 0;
 
   constructor() { }
 
@@ -24,5 +27,10 @@ export class DeployComponent implements OnInit {
     {
       this.file = event.target.files[0];
     }
+  }
+
+  onInviteUpdate() {
+    this.partners.push(this.inviteField);
+    this.inviteField = '';
   }
 }

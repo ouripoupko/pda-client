@@ -30,10 +30,30 @@
       <mat-label>protocol</mat-label>
       <mat-select [(value)]="selectedProtocol">
         <mat-option value="BFT">BFT</mat-option>
+        <mat-option value="Dissemination">Dissemination</mat-option>
         <mat-option value="POW">POW</mat-option>
         <mat-option value="Blocklace">Blocklace</mat-option>
       </mat-select>
     </mat-form-field>
+  </div>
+  <div *ngIf="selectedProtocol=='Dissemination'">
+    <div>
+      Paste invitation:
+      <mat-form-field>
+        <mat-label>Invitation</mat-label>
+        <input matInput type="text" [(ngModel)]="inviteField">
+      </mat-form-field>
+      <button mat-button (click)=onInviteUpdate() color="primary">Update</button>
+    </div>
+    <div *ngFor="let partner of partners">
+      {{partner}}
+    </div>
+    <div>
+      select threshold:
+      <mat-slider [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="threshold">
+        where am i
+      </mat-slider>
+    </div>
   </div>
   <div>
     Default application link:
@@ -41,8 +61,9 @@
       <mat-label>app link</mat-label>
       <mat-select [(value)]="appLink">
         <mat-option value="http://localhost:4201">personal profile</mat-option>
-        <mat-option value="http://localhost:4202">social network</mat-option>
-        <mat-option value="http://localhost:4203">deliberation</mat-option>
+        <mat-option value="http://localhost:4202">community</mat-option>
+        <mat-option value="http://localhost:4203">social network</mat-option>
+        <mat-option value="http://localhost:4204">deliberation</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -50,7 +71,7 @@
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close color="primary">Cancel</button>
   <button mat-button [mat-dialog-close]="{'file': file, 'contractName': contractName, 'profile': selectedProfile,
-                                          'protocol': selectedProtocol, 'appLink': appLink}"
+                                          'protocol': selectedProtocol, 'group': partners, 'threshold': threshold, 'appLink': appLink}"
           cdkFocusInitial color="primary">Deploy</button>
 </mat-dialog-actions>
 

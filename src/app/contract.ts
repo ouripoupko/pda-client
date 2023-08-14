@@ -11,6 +11,8 @@ export interface Contract {
   values: any[];
   pid: string;
   address: string;
+  group: string[];
+  threshold: number;
 }
 
 export interface Method {
