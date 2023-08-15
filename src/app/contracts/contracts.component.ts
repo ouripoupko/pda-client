@@ -44,10 +44,10 @@ export class ContractsComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.server = params['server'];
       this.agent = params['agent'];
-    });
-    console.log('subscribe done?', this.server, this.agent);
 
-    this.updateContracts();
+      this.updateContracts();
+    });
+
     this.agentService.listen(this.server, this.agent).addEventListener('message', message => {
       if(message.data.length > 0) {
         this.updateContracts();
