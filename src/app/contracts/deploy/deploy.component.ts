@@ -7,10 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DeployComponent implements OnInit {
 
-  file!: File;
+  contractDetails = {};
   contractName = '';
   selectedProtocol = '';
-  appLink = '';
   selectedProfile: any = '';
   public existingProfiles: any[] = [];
   inviteField: string = '';
@@ -20,13 +19,7 @@ export class DeployComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-  }
-
-  onFileSelected(event: any) {
-    if(event.target.files.length > 0)
-    {
-      this.file = event.target.files[0];
-    }
+    this.selectedProtocol = 'BFT';
   }
 
   onInviteUpdate() {

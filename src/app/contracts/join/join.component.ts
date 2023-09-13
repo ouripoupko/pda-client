@@ -12,13 +12,12 @@ export class JoinComponent implements OnInit {
 
   address: string = '';
   agent: string = '';
-  contractInvite: string = '';
-  selectedContract: string = '';
+  contract: string = '';
   name: string = '';
   selectedProfile: any = '';
   public existingProfiles: any[] = [];
-
-  existingContracts: Contract[] = [];
+  isDisabled: boolean = true;
+  invitation: string = "";
 
   constructor(
       private agentService: AgentService,
@@ -28,34 +27,13 @@ export class JoinComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onFileSelected(event: any) {
-    if(event.target.files.length > 0)
-    {
-      var reader = new FileReader();
-      reader.onload = () => {
-        var text = reader.result as string;
-        var json = JSON.parse(text);
-        this.address = json['address'];
-        this.agent = json['agent'];
-        this.name = event.target.files[0].name;
-        this.agentService.getContracts(this.address, this.agent)
-          .subscribe((contracts:Contract[]) => {
-            this.existingContracts = contracts;
-          });
-      };
-      reader.readAsText(event.target.files[0]);
-    }
-  }
-
-  onInviteUpdate() {
+  onInviteUpdate(value: string) {
     try {
-      let json = JSON.parse(this.contractInvite);
+      let json = JSON.parse(value);
       this.address = json['address'];
       this.agent = json['agent'];
-      this.agentService.getContracts(this.address, this.agent)
-        .subscribe((contracts:Contract[]) => {
-          this.existingContracts = contracts;
-        });
+      this.contract = json['contract'];
+      this.isDisabled = false;
     } catch {
       let config = new MatSnackBarConfig;
       config.duration = 2000;

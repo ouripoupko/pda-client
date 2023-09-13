@@ -9,6 +9,7 @@ import { DeployComponent } from './deploy/deploy.component';
 import { JoinComponent } from './join/join.component';
 import { IdentifyComponent } from './identify/identify.component';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-contracts',
@@ -37,7 +38,8 @@ export class ContractsComponent implements OnInit {
     private route: ActivatedRoute,
     private agentService: AgentService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private httpClient: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -76,22 +78,22 @@ export class ContractsComponent implements OnInit {
         let contract = {} as Contract;
         contract.address = this.server;
         contract.pid = this.agent;
-        contract.name = result.contractName;
+        contract.name = result.name;
         contract.protocol = result.protocol;
-        contract.default_app = result.appLink;
-        contract.contract = result.file.name;
+        let details = JSON.parse(result.contract);
+        contract.default_app = details.applink;
+        contract.contract = details.file;
         contract.profile = result.profile;
         contract.group = result.group;
         contract.threshold = result.threshold;
-        console.log(contract, result);
-        var reader = new FileReader();
-        reader.onload = () => {
-          contract.code = reader.result as string;
-          this.agentService.addContract(this.server, this.agent, contract)
-            .subscribe(_ => {
-          });
-        };
-        reader.readAsText(result.file);
+        this.httpClient.get(`assets/${details.file}`, { responseType: 'text' })
+          .subscribe(data => {
+            contract.code = data;
+            console.log(contract, result);
+            this.agentService.addContract(this.server, this.agent, contract)
+              .subscribe(_ => {
+            });
+        });
       }
     });
   }
@@ -103,29 +105,24 @@ export class ContractsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result:', result);
-      this.agentService.joinContract(this.server, this.agent, result.address,
-                                     result.agent, result.contract, result.profile)
-        .subscribe(_ => {
-      });
+      if(result) {
+        this.agentService.joinContract(this.server, this.agent, result.address,
+                                      result.agent, result.contract, result.profile)
+          .subscribe(_ => {
+        });
+      }
     });
   }
 
   openID() {
     const dialogRef = this.dialog.open(IdentifyComponent);
     dialogRef.componentInstance.existingContracts =
-      this.dataSource.filter(contract => contract.contract == 'profile.py');
+      this.dataSource; //.filter(contract => contract.contract == 'profile.py');
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result modified:', result);
       if(result) {
-        const link = {'address': this.server, 'agent': this.agent, 'profile': result.contract};
-        // const blob = new Blob([JSON.stringify(link, null, 2)], { type: "application/json",});
-        // var url = window.URL.createObjectURL(blob);
-        // var anchor = document.createElement("a");
-        // anchor.href = url;
-        // anchor.download = "my_id.json";
-        // anchor.click();
-        // window.URL.revokeObjectURL(url);
+        const link = {'address': this.server, 'agent': this.agent, 'contract': result.contract};
         this.copyToClipboard(JSON.stringify(link));
       }
     });

@@ -2,9 +2,15 @@
 <mat-dialog-content>
   <div>
     Select a contract:
-    <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
-    <button mat-raised-button color="primary" (click)="fileUpload.click()">Browse</button>
-      {{file ? file.name : 'no file selected'}}
+    <mat-form-field appearance="fill">
+      <mat-label>contract</mat-label>
+      <mat-select [(value)]="contractDetails">
+        <mat-option value='{"file": "profile.py", "applink": "http://localhost:4201"}'>personal profile</mat-option>
+        <mat-option value='{"file": "community.py", "applink": "http://localhost:4202"}'>community</mat-option>
+        <mat-option value='{"file": "sn_person.py", "applink": "http://localhost:4203"}'>social network</mat-option>
+        <mat-option value='{"file": "delib.py", "applink": "http://localhost:4204"}'>deliberation</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   <div>
     Give it a name:
@@ -30,9 +36,9 @@
       <mat-label>protocol</mat-label>
       <mat-select [(value)]="selectedProtocol">
         <mat-option value="BFT">BFT</mat-option>
-        <mat-option value="Dissemination">Dissemination</mat-option>
+<!--        <mat-option value="Dissemination">Dissemination</mat-option>
         <mat-option value="POW">POW</mat-option>
-        <mat-option value="Blocklace">Blocklace</mat-option>
+        <mat-option value="Blocklace">Blocklace</mat-option> -->
       </mat-select>
     </mat-form-field>
   </div>
@@ -55,23 +61,11 @@
       </mat-slider>
     </div>
   </div>
-  <div>
-    Default application link:
-    <mat-form-field appearance="fill">
-      <mat-label>app link</mat-label>
-      <mat-select [(value)]="appLink">
-        <mat-option value="http://localhost:4201">personal profile</mat-option>
-        <mat-option value="http://localhost:4202">community</mat-option>
-        <mat-option value="http://localhost:4203">social network</mat-option>
-        <mat-option value="http://localhost:4204">deliberation</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close color="primary">Cancel</button>
-  <button mat-button [mat-dialog-close]="{'file': file, 'contractName': contractName, 'profile': selectedProfile,
-                                          'protocol': selectedProtocol, 'group': partners, 'threshold': threshold, 'appLink': appLink}"
+  <button mat-button [mat-dialog-close]="{'contract': contractDetails, 'name': contractName, 'profile': selectedProfile,
+                                          'protocol': selectedProtocol, 'group': partners, 'threshold': threshold}"
           cdkFocusInitial color="primary">Deploy</button>
 </mat-dialog-actions>
 
