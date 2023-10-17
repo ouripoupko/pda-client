@@ -7,6 +7,11 @@ class Delib:
             self.parameters['topics'] = []
             self.parameters['counter'] = 1
 
+    def approve_partner(self, partner):
+        cond =  len(self.parameters['topics'])%2 == 1
+        print('cond is', cond)
+        return cond
+
     def create_statement(self, parent, text):
         if parent and parent not in self.statements:
             parent = None
