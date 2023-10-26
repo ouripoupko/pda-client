@@ -4,11 +4,11 @@
     Select a contract:
     <mat-form-field appearance="fill">
       <mat-label>contract</mat-label>
-      <mat-select [(value)]="contractDetails">
-        <mat-option value='{"file": "profile.py", "applink": "http://localhost:4201"}'>personal profile</mat-option>
-        <mat-option value='{"file": "community.py", "applink": "http://localhost:4202"}'>community</mat-option>
-        <mat-option value='{"file": "sn_person.py", "applink": "http://localhost:4203"}'>social network</mat-option>
-        <mat-option value='{"file": "delib.py", "applink": "http://localhost:4204"}'>deliberation</mat-option>
+      <mat-select [(value)]="contractType">
+        <mat-option value="profile">personal profile</mat-option>
+        <mat-option value="community">community</mat-option>
+        <mat-option value="social">social network</mat-option>
+        <mat-option value="deliberation">deliberation</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -19,13 +19,24 @@
       <input matInput type="text" [(ngModel)]="contractName">
     </mat-form-field>
   </div>
-  <div>
+  <div *ngIf="contractType && contractType!='profile'">
     Select your profile:
     <mat-form-field appearance="fill" class="text">
       <mat-label>profile</mat-label>
       <mat-select [(value)]="selectedProfile">
         <mat-option *ngFor="let profile of existingProfiles" [value]="profile.id">
           {{profile.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div *ngIf="contractType=='deliberation'">
+    Select a community:
+    <mat-form-field appearance="fill" class="text">
+      <mat-label>community</mat-label>
+      <mat-select [(value)]="selectedCommunity">
+        <mat-option *ngFor="let community of existingCommunities" [value]="community.id">
+          {{community.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -64,8 +75,9 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close color="primary">Cancel</button>
-  <button mat-button [mat-dialog-close]="{'contract': contractDetails, 'name': contractName, 'profile': selectedProfile,
-                                          'protocol': selectedProtocol, 'group': partners, 'threshold': threshold}"
+  <button mat-button [mat-dialog-close]="{'contract': getContractDetails(), 'name': contractName, 'profile': selectedProfile,
+                                          'protocol': selectedProtocol, 'group': partners, 'threshold': threshold,
+                                          'community': selectedCommunity}"
           cdkFocusInitial color="primary">Deploy</button>
 </mat-dialog-actions>
 

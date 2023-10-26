@@ -1,16 +1,15 @@
 class Delib:
 
-    def __init__(self):
+    def __init__(self, community):
         self.statements = Storage('statements')
         self.parameters = Storage('parameters')['parameters']
+        self.community = community
         if not self.parameters.exists():
             self.parameters['topics'] = []
             self.parameters['counter'] = 1
 
     def approve_partner(self, partner):
-        cond =  len(self.parameters['topics'])%2 == 1
-        print('cond is', cond)
-        return cond
+        return read(self.community, 'is_member', {'agent': partner}) if self.community else True
 
     def create_statement(self, parent, text):
         if parent and parent not in self.statements:

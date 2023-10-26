@@ -13,6 +13,9 @@ class Community:
     def get_members(self):
         return {key: self.members[key].get_dict() for key in self.members}
 
+    def is_member(self, agent):
+        return agent in self.members
+
     def get_nominates(self):
         return [key for key in self.nominates]
 
@@ -20,14 +23,16 @@ class Community:
         requester = master()
         if requester in self.members or requester in self.nominates:
             return False
-        if len(self.members) == 0 and len(self.nominates) < 5:
+        if len(self.tasks) > 0:
+            return False
+        if len(self.members) == 0:
+            self.members[requester] = {'neighbors': []}
+        elif len(self.members) < 5:
             self.nominates[requester] = {}
-            if len(self.nominates) == 5:
-                nominates = [key for key in self.nominates]
-                for key in nominates:
-                    self.tasks[key] = {other: False for other in nominates if other != key}
-            return True
-        elif len(self.members) > 4 and len(self.tasks) == 0:
+            self.tasks[requester] = {member: False for member in self.members}
+            for member in self.members:
+                self.tasks[member] = {requester: False}
+        else:
             members = [key for key in self.members]
             [r, s] = random(timestamp(), None, len(members))
             first = members[r]
@@ -46,8 +51,7 @@ class Community:
             for key in order:
                 self.tasks[key] = {requester: False}
             self.tasks[requester] = {key: False for key in order}
-            return True
-        return False
+        return True
 
     def approve(self, approved):
         approver = master()
@@ -71,6 +75,8 @@ class Community:
                             self.members[key] = {'neighbors': order}
                         else:
                             self.members[key] = {'neighbors': [other for other in self.tasks[key].get_dict()]}
+                            for other in self.tasks[key].get_dict():
+                                self.members[other]['neighbors'] = self.members[other]['neighbors'] + [key]
                         del self.nominates[key]
                     for key in self.tasks:
                         del self.tasks[key]

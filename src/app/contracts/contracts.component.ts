@@ -75,20 +75,28 @@ export class ContractsComponent implements OnInit {
     const dialogRef = this.dialog.open(DeployComponent);
     dialogRef.componentInstance.existingProfiles =
       this.dataSource.filter(contract => contract.contract == 'profile.py');
+    dialogRef.componentInstance.existingCommunities =
+      this.dataSource.filter(contract => contract.contract == 'community.py');
 
     dialogRef.afterClosed().subscribe(async result => {
       if (result) {
+        let details = result.contract;
         let contract = {} as Contract;
-        contract.address = this.server;
-        contract.pid = this.agent;
+
         contract.name = result.name;
-        contract.protocol = result.protocol;
-        let details = JSON.parse(result.contract);
-        contract.default_app = details.applink;
         contract.contract = details.file;
-        contract.profile = result.profile;
+        contract.code = "";
+        contract.protocol = result.protocol;
+        contract.default_app = details.applink;
+        contract.pid = this.agent;
+        contract.address = this.server;
+
         contract.group = result.group;
         contract.threshold = result.threshold;
+        contract.profile = result.profile;
+
+        contract.constructor = result.community ? {community: result.community} : {};
+
         this.httpClient.get(`assets/${details.file}`, { responseType: 'text' })
           .subscribe(data => {
             contract.code = data;
