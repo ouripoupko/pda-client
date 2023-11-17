@@ -78,6 +78,6 @@
   <button mat-button [mat-dialog-close]="{'contract': getContractDetails(), 'name': contractName, 'profile': selectedProfile,
                                           'protocol': selectedProtocol, 'group': partners, 'threshold': threshold,
                                           'community': selectedCommunity}"
-          cdkFocusInitial color="primary">Deploy</button>
+          color="primary" [disabled]="contractType == '' || contractName == ''">Deploy</button>
 </mat-dialog-actions>
 

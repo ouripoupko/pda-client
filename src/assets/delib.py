@@ -1,6 +1,6 @@
 class Delib:
 
-    def __init__(self, community):
+    def __init__(self, community = None):
         self.statements = Storage('statements')
         self.parameters = Storage('parameters')['parameters']
         self.community = community
