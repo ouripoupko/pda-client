@@ -16,16 +16,14 @@
       <mat-form-field appearance="fill">
         <mat-label>server</mat-label>
         <mat-select [(value)]="selectedServer" (selectionChange)="onServerSelected($event)">
-          <mat-option value="http://localhost:5001/">localhost</mat-option>
-          <mat-option value="b">Google</mat-option>
-          <mat-option value="http://talmonlab.bgu.ac.il/">BGU</mat-option>
-          <mat-option value="http://192.168.0.103:5001/">103</mat-option>
+          <mat-option [value]="location(true)">{{location(false)}}</mat-option>
+          <mat-option value="http://localhost:5001">localhost</mat-option>
           <mat-option value="other">Other</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field *ngIf="showServerTextInput" appearance="fill">
         <mat-label>Type a custom server</mat-label>
-        <input matInput (ngModelChange)="selectedServer">
+        <input matInput (ngModelChange)="otherServer">
       </mat-form-field>
     </div>
     <button mat-raised-button color="primary" class="login-button" (click)="onLogin($event)"

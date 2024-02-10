@@ -19,12 +19,13 @@ export class AgentService {
 
 
   listen(server: string, identity: string): EventSource {
-    return new EventSource(`${server}stream?agent=${identity}&contract=`);
+    console.log('connecting to SSE');
+    return new EventSource(`${server}/stream?agent=${identity}&contract=`);
   }
 
   isExistAgent(server: string, identity: string): Observable<Boolean> {
     let params = new HttpParams().set('action', 'is_exist_agent');
-    return this.http.get<Boolean>(`${server}ibc/app/${identity}`, {params: params}).pipe(
+    return this.http.get<Boolean>(`${server}/ibc/app/${identity}`, {params: params}).pipe(
         tap(_ => console.log('query agent')),
         first()
       );
@@ -32,7 +33,7 @@ export class AgentService {
 
   registerAgent(server: string, identity: string): Observable<Boolean> {
     let params = new HttpParams().set('action', 'register_agent');
-    return this.http.put<Boolean>(`${server}ibc/app/${identity}`, {}, {...this.httpOptions, params:params} ).pipe(
+    return this.http.put<Boolean>(`${server}/ibc/app/${identity}`, {}, {...this.httpOptions, params:params} ).pipe(
       tap(_ => console.log('added new identity')),
       catchError(this.handleError<Boolean>('registerAgent')),
       first()
@@ -41,7 +42,7 @@ export class AgentService {
 
   getContracts(server: string, identity: string): Observable<Contract[]> {
     let params = new HttpParams().set('action', 'get_contracts');
-    return this.http.get<Contract[]>(`${server}ibc/app/${identity}`, {params: params}).pipe(
+    return this.http.get<Contract[]>(`${server}/ibc/app/${identity}`, {params: params}).pipe(
         tap(_ => console.log('fetched contracts')),
         catchError(this.handleError<Contract[]>('getContracts', [])),
         first()
@@ -51,7 +52,7 @@ export class AgentService {
   addContract(server: string, agent: string, contract: Contract): Observable<Boolean> {
     console.log('add new contract:', contract);
     let params = new HttpParams().set('action', 'deploy_contract');
-    return this.http.put<Boolean>(`${server}ibc/app/${agent}`,
+    return this.http.put<Boolean>(`${server}/ibc/app/${agent}`,
                                     contract,
                                     {...this.httpOptions, params: params}).pipe(
       tap(_ => console.log('added contract')),
@@ -63,7 +64,7 @@ export class AgentService {
   joinContract(server: string, agent: string,
                address: string, other_agent: string, contract_id: string, profile: string): Observable<any> {
     let params = new HttpParams().set('action', 'join_contract');
-    return this.http.put(`${server}ibc/app/${agent}`,
+    return this.http.put(`${server}/ibc/app/${agent}`,
                          { address: address, agent: other_agent, contract: contract_id, profile: profile },
                           {...this.httpOptions, params: params}).pipe(
       tap(_ => console.log('joined contract')),
@@ -74,7 +75,7 @@ export class AgentService {
 
   getReply(server: string, agent: string, code: string) {
     let params = new HttpParams().set('action', 'get_reply');
-    return this.http.post(`${server}ibc/app/${agent}`,
+    return this.http.post(`${server}/ibc/app/${agent}`,
                           { reply: code },
                           {...this.httpOptions, params: params}).pipe(
       tap(_ => console.log('got reply')),

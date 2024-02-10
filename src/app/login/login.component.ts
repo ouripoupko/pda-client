@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { AgentService } from '../agent.service';
 import { RegisterComponent } from './register/register.component';
@@ -16,6 +15,7 @@ export class LoginComponent implements OnInit {
   currentInput: any;
   key: string = '';
   selectedServer: string = "";
+  otherServer: string = "";
   showServerTextInput = false;
   constructor(
     private router: Router,
@@ -24,6 +24,10 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+  }
+
+  location(full: boolean) {
+    return full ? location.origin : location.hostname + (location.port ? ' (' + location.port + ')' : '');
   }
 
   onFileSelected(event: any) {
@@ -44,22 +48,19 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin(event: any) {
-    this.agentService.isExistAgent(this.selectedServer, this.key).subscribe({
+    let server = this.selectedServer == "other" ? this.otherServer : this.selectedServer;
+    this.agentService.isExistAgent(server, this.key).subscribe({
       next: (exists: Boolean) => {
-        console.log(this.key, this.selectedServer, exists);
+        console.log(this.key, server, exists);
         if (exists) {
-          this.navigate();
+          this.navigate(server);
         }
         else {
           const dialogRef = this.dialog.open(RegisterComponent);
 
           dialogRef.afterClosed().subscribe((result: Boolean) => {
             if (result) {
-              this.agentService.registerAgent(this.selectedServer, this.key).subscribe((succeed: Boolean) => {
-                if(succeed) {
-                  this.navigate();
-                }
-              });
+              this.agentService.registerAgent(server, this.key).subscribe((reply) => this.navigate(server));
             }
           });
         }
@@ -68,8 +69,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  navigate() {
-    this.router.navigate(['contracts'], { queryParams: { server: this.selectedServer, agent: this.key}});
+  navigate(server: string) {
+    this.router.navigate(['contracts'], { queryParams: { server: server, agent: this.key}});
 }
 
   onGenerate(event: any) {
