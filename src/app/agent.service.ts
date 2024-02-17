@@ -33,7 +33,7 @@ export class AgentService {
 
   registerAgent(server: string, identity: string): Observable<Boolean> {
     let params = new HttpParams().set('action', 'register_agent');
-    return this.http.put<Boolean>(`${server}/ibc/app/${identity}`, {}, {...this.httpOptions, params:params} ).pipe(
+    return this.http.put<Boolean>(`${server}/ibc/app/${identity}`, {address: server}, {...this.httpOptions, params:params} ).pipe(
       tap(_ => console.log('added new identity')),
       catchError(this.handleError<Boolean>('registerAgent')),
       first()

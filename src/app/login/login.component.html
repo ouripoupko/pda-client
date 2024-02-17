@@ -17,7 +17,7 @@
         <mat-label>server</mat-label>
         <mat-select [(value)]="selectedServer" (selectionChange)="onServerSelected($event)">
           <mat-option [value]="location(true)">{{location(false)}}</mat-option>
-          <mat-option value="http://localhost:5001">localhost</mat-option>
+          <mat-option value="http://localhost:5001">localhost (5001)</mat-option>
           <mat-option value="other">Other</mat-option>
         </mat-select>
       </mat-form-field>
