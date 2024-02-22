@@ -29,7 +29,7 @@ export class JoinComponent implements OnInit {
 
   onInviteUpdate(value: string) {
     try {
-      let json = JSON.parse(value);
+      let json = JSON.parse(window.atob(value));
       this.address = json['address'];
       this.agent = json['agent'];
       this.contract = json['contract'];

@@ -141,13 +141,16 @@ export class ContractsComponent implements OnInit {
   openID() {
     const dialogRef = this.dialog.open(IdentifyComponent);
     dialogRef.componentInstance.existingContracts =
-      this.dataSource; //.filter(contract => contract.contract == 'profile.py');
+      this.dataSource;
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result modified:', result);
       if(result) {
         const link = {'address': this.server, 'agent': this.agent, 'contract': result.contract};
-        this.copyToClipboard(JSON.stringify(link));
+        // pad with spaces to avoid '=' chars in the base64
+        let str = JSON.stringify(link);
+        str += ' '.repeat(3-(str.length%3));
+        this.copyToClipboard(window.btoa(str));
       }
     });
   }
