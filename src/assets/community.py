@@ -1,82 +1,102 @@
 class Community:
 
     def __init__(self):
-        self.members = Storage('members')
-        self.nominates = Storage('nominates')
-        self.tasks = Storage('tasks')
-        # self.parameters = Storage('parameters')['parameters']
+        self.db = Storage('community')
+        self.members = self.db['members']
+        self.nominates = self.db['nominates']
+        self.approvals = self.db['approvals']
+        self.properties = self.db['properties']
 
     def get_tasks(self):
+        reply = {}
         requester = master()
-        return self.tasks[requester].get_dict() if requester in self.tasks else {}
-
+        if requester in self.nominates:
+            for task in self.nominates[requester]:
+                reply[task] = requester in self.approvals and task in self.approvals[requester]
+        else:
+            for task in self.nominates:
+                if requester in self.nominates[task]:
+                    reply[task] = requester in self.approvals and task in self.approvals[requester]
+        return reply
+    
     def get_members(self):
-        return {key: self.members[key].get_dict() for key in self.members}
+        return {key: self.members[key] for key in self.members}
 
     def is_member(self, agent):
         return agent in self.members
 
     def get_nominates(self):
         return [key for key in self.nominates]
+    
+    def get_properties(self):
+        return self.properties.get_dict()
 
-    def request_join(self):
+    def request_join(self, instructions=None):
         requester = master()
         if requester in self.members or requester in self.nominates:
             return False
-        if len(self.tasks) > 0:
-            return False
         if len(self.members) == 0:
-            self.members[requester] = {'neighbors': []}
+            self.members[requester] = []
+            self.properties['instructions'] = instructions
         elif len(self.members) < 5:
-            self.nominates[requester] = {}
-            self.tasks[requester] = {member: False for member in self.members}
-            for member in self.members:
-                self.tasks[member] = {requester: False}
+            self.nominates[requester] = [member for member in self.members]
         else:
-            members = [key for key in self.members]
-            [r, s] = random(timestamp(), None, len(members))
-            first = members[r]
-            others = self.members[first]['neighbors']
-            [r, s] = random(None, s, len(others))
-            second = others[r]
-            members.remove(first)
-            members.remove(second)
-            [r, s] = random(None, s, len(members))
-            third = members[r]
-            others = [key for key in self.members[third]['neighbors'] if key in members]
-            [r, s] = random(None, s, len(others))
-            fourth = others[r]
-            order = [first, second, third, fourth]
-            self.nominates[requester] = {'order': order}
-            for key in order:
-                self.tasks[key] = {requester: False}
-            self.tasks[requester] = {key: False for key in order}
+            edges = [(key, value) for key in self.members for value in self.members[key]]
+            for nominate in self.nominates:
+                others = self.nominates[nominate]
+                edges.remove(others[0], others[1])
+                edges.remove(others[1], others[0])
+                edges.remove(others[2], others[3])
+                edges.remove(others[3], others[2])
+            if len(edges) < 4:
+                return False
+            [r, s] = random(timestamp(), None, len(edges))
+            first = edges[r]
+            edges.remove((first[0], first[1]))
+            edges.remove((first[1], first[0]))
+            [r, s] = random(None, s, len(edges))
+            second = edges[r]
+            self.nominates[requester] = [first[0], first[1], second[0], second[1]]
         return True
 
     def approve(self, approved):
         approver = master()
-        if approver in self.tasks:
-            if approved in self.tasks[approver]:
-                self.tasks[approver][approved] = True
-                all_approved = True
-                for key in self.tasks:
-                    for task in self.tasks[key]:
-                        if not self.tasks[key][task]:
-                            all_approved = False
-                if all_approved:
-                    for key in self.nominates:
-                        if 'order' in self.nominates[key]:
-                            order = self.nominates[key]['order']
-                            for i in range(4):
-                                previous = self.members[order[i]]['neighbors']
-                                previous.remove(order[i+1-2*(i % 2)])
-                                previous.append(key)
-                                self.members[order[i]]['neighbors'] = previous
-                            self.members[key] = {'neighbors': order}
+        (nominate, member) = (approved, approver) if approved in self.nominates else (approver, approved) if approver in self.nominates else (None, None)
+        if nominate and member in self.nominates[nominate]:
+            self.approvals[approver] = (self.approvals[approver] or []) + [approved]
+            all_approved = True
+            if nominate in self.approvals:
+                for member in self.nominates[nominate]:
+                    if not member in self.approvals[nominate] or not member in self.approvals or not nominate in self.approvals[member]:
+                        all_approved = False
+            else:
+                all_approved = False
+            if all_approved:
+                order = self.nominates[nominate]
+                click = len(self.members) < 5
+                for i in range(len(order)):
+                    previous = self.members[order[i]]
+                    if not click:
+                        previous.remove(order[i+1-2*(i % 2)])
+                    previous.append(nominate)
+                    self.members[order[i]] = previous
+                self.members[nominate] = [order]
+                del self.nominates[nominate]
+
+    def disapprove(self, disapproved):
+        approver = master()
+        nominate = disapproved if disapproved in self.nominates else approver if approver in self.nominates else None
+        if nominate:
+            members = self.nominates[nominate]
+            del self.nominates[nominate]
+            if nominate in self.approvals:
+                del self.approvals[nominate]
+            for member in members:
+                if member in self.approvals:
+                    approvals = self.approvals[member]
+                    if nominate in approvals:
+                        approvals.remove(nominate)
+                        if approvals:
+                            self.approvals[member] = approvals
                         else:
-                            self.members[key] = {'neighbors': [other for other in self.tasks[key].get_dict()]}
-                            for other in self.tasks[key].get_dict():
-                                self.members[other]['neighbors'] = self.members[other]['neighbors'] + [key]
-                        del self.nominates[key]
-                    for key in self.tasks:
-                        del self.tasks[key]
+                            del self.approvals[member]

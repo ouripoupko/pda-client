@@ -4,7 +4,7 @@
     <div class="input-wrap">
       <label>Select an identity:</label>
       <div class="file-input-wrapper">
-        <input type="file" style="display:none" (change)="onFileSelected($event)" #fileUpload/>
+        <input type="file" style="display:none" accept=".json" (change)="onFileSelected($event)" #fileUpload/>
         <button mat-raised-button color="primary" (click)="fileUpload.click()" class="browse-button">Select existing</button>
         <span class="or">--Or--</span>
         <button mat-raised-button color="primary" (click)="onGenerate($event)">Generate new</button>

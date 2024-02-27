@@ -209,6 +209,7 @@ export class ContractsComponent implements OnInit {
     url.searchParams.append("server", this.server);
     url.searchParams.append("agent", this.agent);
     url.searchParams.append("contract", contract.id);
+    console.log('url', url);
 
     window.open(url, "_blank");
   }

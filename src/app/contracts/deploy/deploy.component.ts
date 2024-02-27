@@ -24,11 +24,19 @@ export class DeployComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.contractDetails = {
-      "profile": {"file": "profile.py", "applink": location.origin + "/profile"},
-      "community": {"file": "community.py", "applink": location.origin + "/community"},
-      "social": {"file": "sn_person.py", "applink": location.origin + "/social"},
-      "deliberation": {"file": "delib.py", "applink": location.origin + "/delib"}};
+    if (location.origin == 'http://localhost:4200') {
+      this.contractDetails = {
+        "profile": {"file": "profile.py", "applink": "http://localhost:4201"},
+        "community": {"file": "community.py", "applink": "http://localhost:4202"},
+        "social": {"file": "sn_person.py", "applink": "http://localhost:4203"},
+        "deliberation": {"file": "delib.py", "applink": "http://localhost:4204"}};
+    } else {
+      this.contractDetails = {
+        "profile": {"file": "profile.py", "applink": location.origin + "/profile"},
+        "community": {"file": "community.py", "applink": location.origin + "/community"},
+        "social": {"file": "sn_person.py", "applink": location.origin + "/social"},
+        "deliberation": {"file": "delib.py", "applink": location.origin + "/delib"}};
+    }
     this.selectedProtocol = 'BFT';
   }
 
