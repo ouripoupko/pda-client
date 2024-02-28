@@ -34,7 +34,6 @@ export class ContractsComponent implements OnInit {
   expandedElement: any;
   server = "";
   agent = "";
-  serverSide = new Subject<void>()
 
   constructor(
     private route: ActivatedRoute,
@@ -54,8 +53,15 @@ export class ContractsComponent implements OnInit {
 
     this.agentService.listen(this.server, this.agent).addEventListener('message', message => {
       if(message.data.length > 0) {
-        this.updateContracts();
-        this.serverSide.next();
+        let content = JSON.parse(message.data)
+        console.log('listen', content);
+        if (content.action == "deploy_contract")
+          this.updateContracts();
+        if (content.action == "a2a_reply_join" && content.reply == false && content.agent == this.agent) {
+          this.snackBar.open('Unauthorized to join contract', '', {
+            duration: 2000
+          });
+        }
       }
     });
   }
@@ -119,21 +125,7 @@ export class ContractsComponent implements OnInit {
       if(result) {
         this.agentService.joinContract(this.server, this.agent, result.address,
                                       result.agent, result.contract, result.profile)
-          .subscribe(reply => {
-            this.serverSide.pipe(
-              // this is not good enough. I should check the reply untill I see a direct response
-              // and only then unsubscribe. But I am tired to do this now.
-              first()
-            ).subscribe(_ => {
-              this.agentService.getReply(this.server, this.agent, reply['reply']).subscribe((message: any) => {
-                if('status' in message && message['status'] == false) {
-                  this.snackBar.open('Unauthorized to join contract', '', {
-                    duration: 2000
-                  });
-                }
-              });
-            });
-        });
+          .subscribe();
       }
     });
   }

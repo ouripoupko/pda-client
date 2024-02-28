@@ -39,7 +39,10 @@ class Community:
             self.members[requester] = []
             self.properties['instructions'] = instructions
         elif len(self.members) < 5:
-            self.nominates[requester] = [member for member in self.members]
+            if len(self.nominates == 0):
+                self.nominates[requester] = [member for member in self.members]
+            else:
+                return False
         else:
             edges = [(key, value) for key in self.members for value in self.members[key]]
             for nominate in self.nominates:

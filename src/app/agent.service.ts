@@ -73,17 +73,6 @@ export class AgentService {
     );
   }
 
-  getReply(server: string, agent: string, code: string) {
-    let params = new HttpParams().set('action', 'get_reply');
-    return this.http.post(`${server}/ibc/app/${agent}`,
-                          { reply: code },
-                          {...this.httpOptions, params: params}).pipe(
-      tap(_ => console.log('got reply')),
-      catchError(this.handleError<any>('reply')),
-      first()
-    );
-  }
-
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
