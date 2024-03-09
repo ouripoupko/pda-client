@@ -7,6 +7,12 @@ class Community:
         self.approvals = self.db['approvals']
         self.properties = self.db['properties']
 
+    def get_all(self):
+        return {'tasks': self.get_tasks(),
+                'members': self.get_members(),
+                'nominates': self.get_nominates(),
+                'properties': self.get_properties()}
+    
     def get_tasks(self):
         reply = {}
         requester = master()
@@ -39,7 +45,7 @@ class Community:
             self.members[requester] = []
             self.properties['instructions'] = instructions
         elif len(self.members) < 5:
-            if len(self.nominates == 0):
+            if len(self.nominates) == 0:
                 self.nominates[requester] = [member for member in self.members]
             else:
                 return False
