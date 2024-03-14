@@ -125,7 +125,13 @@ export class ContractsComponent implements OnInit {
       if(result) {
         this.agentService.joinContract(this.server, this.agent, result.address,
                                       result.agent, result.contract, result.profile)
-          .subscribe();
+          .subscribe(reply => {
+            if (!reply) {
+              this.snackBar.open('You already joined this contract', '', {
+                duration: 2000
+              });
+            }
+          });
       }
     });
   }
