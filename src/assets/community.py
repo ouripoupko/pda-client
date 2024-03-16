@@ -89,7 +89,7 @@ class Community:
                         previous.remove(order[i+1-2*(i % 2)])
                     previous.append(nominate)
                     self.members[order[i]] = previous
-                self.members[nominate] = [order]
+                self.members[nominate] = order
                 del self.nominates[nominate]
 
     def disapprove(self, disapproved):
