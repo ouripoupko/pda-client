@@ -53,16 +53,19 @@ class Community:
             edges = [(key, value) for key in self.members for value in self.members[key]]
             for nominate in self.nominates:
                 others = self.nominates[nominate]
-                edges.remove(others[0], others[1])
-                edges.remove(others[1], others[0])
-                edges.remove(others[2], others[3])
-                edges.remove(others[3], others[2])
+                edges.remove((others[0], others[1]))
+                edges.remove((others[1], others[0]))
+                edges.remove((others[2], others[3]))
+                edges.remove((others[3], others[2]))
             if len(edges) < 4:
                 return False
             [r, s] = random(timestamp(), None, len(edges))
             first = edges[r]
-            edges.remove((first[0], first[1]))
-            edges.remove((first[1], first[0]))
+            toRemove = {(first[0], value) for value in self.members[first[0]]} |\
+                       {(value, first[0]) for value in self.members[first[0]]} |\
+                       {(first[1], value) for value in self.members[first[1]]} |\
+                       {(value, first[1]) for value in self.members[first[1]]}
+            edges = [value for value in edges if value not in toRemove]
             [r, s] = random(None, s, len(edges))
             second = edges[r]
             self.nominates[requester] = [first[0], first[1], second[0], second[1]]
